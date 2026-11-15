@@ -1,3 +1,4 @@
+import SeatingEditor from "./pages/SeatingEditor";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/login";
@@ -38,6 +39,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signed-in" element={<SignedIn />} />
+        <Route path="/seating-editor" element={<SeatingEditor />} />
       </Routes>
     </BrowserRouter>
   );
