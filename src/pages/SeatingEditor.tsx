@@ -67,6 +67,7 @@ function SeatingEditor() {
   const [desks, setDesks] = useState<Desk[]>([]);
   const [selectedDeskId, setSelectedDeskId] = useState<number | null>(null);
   const [nextDeskId, setNextDeskId] = useState(1);
+  const [frontPosition, setFrontPosition] = useState({ x: 300, y: 25 });
 
   const selectedDesk = desks.find((desk) => desk.id === selectedDeskId);
 
@@ -201,24 +202,33 @@ function SeatingEditor() {
                 />
 
                 {/* Front of classroom */}
-                <Rect
-                  x={300}
-                  y={25}
-                  width={400}
-                  height={12}
-                  fill="#64748b"
-                  cornerRadius={4}
-                />
+                <Group
+                  x={frontPosition.x}
+                  y={frontPosition.y}
+                  draggable
+                  onDragEnd={(event) => {
+                    setFrontPosition({
+                      x: event.target.x(),
+                      y: event.target.y(),
+                    });
+                  }}
+                >
+                  <Rect
+                    width={400}
+                    height={12}
+                    fill="#64748b"
+                    cornerRadius={4}
+                  />
 
-                <Text
-                  x={300}
-                  y={45}
-                  width={400}
-                  text="FRONT OF CLASSROOM"
-                  fontSize={13}
-                  fill="#64748b"
-                  align="center"
-                />
+                  <Text
+                    y={20}
+                    width={400}
+                    text="FRONT OF CLASSROOM"
+                    fontSize={13}
+                    fill="#64748b"
+                    align="center"
+                  />
+                </Group>
 
                 {/* Desks */}
                 {desks.map((desk) => {
