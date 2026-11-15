@@ -1,5 +1,7 @@
+import { useNavigate } from "react-router-dom";
 import { useState, type ChangeEvent } from "react";
 import Papa from "papaparse";
+
 import {
   Upload,
   FileSpreadsheet,
@@ -8,27 +10,33 @@ import {
   CheckCircle2,
   X,
 } from "lucide-react";
+
 import "./ImportStudents.css";
 
 type StudentRecord = Record<string, string>;
 
 function ImportStudents() {
+  const navigate = useNavigate();
+
   const [students, setStudents] = useState<StudentRecord[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
   const [fileName, setFileName] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Handle CSV file upload
   const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (!file) return;
 
+    // Reset previous import
     setErrors([]);
     setStudents([]);
     setColumns([]);
     setFileName("");
 
+    // Check file type
     if (!file.name.toLowerCase().endsWith(".csv")) {
       setErrors(["Please select a CSV file exported from Bromcom."]);
       event.target.value = "";
@@ -37,6 +45,7 @@ function ImportStudents() {
 
     setLoading(true);
 
+    // Read and process CSV file
     Papa.parse<StudentRecord>(file, {
       header: true,
       skipEmptyLines: "greedy",
@@ -44,13 +53,13 @@ function ImportStudents() {
       transformHeader: (header) => header.trim(),
 
       complete: (results) => {
+        const headers = results.meta.fields ?? [];
+
         const importedStudents = results.data.filter((student) =>
           Object.values(student).some(
             (value) => String(value ?? "").trim() !== "",
           ),
         );
-
-        const headers = results.meta.fields ?? [];
 
         const parsingErrors = results.errors.map(
           (error) => `Row ${error.row ?? "unknown"}: ${error.message}`,
@@ -82,25 +91,45 @@ function ImportStudents() {
     });
   };
 
+  // Remove imported file and reset the page
   const clearImport = () => {
     setStudents([]);
     setColumns([]);
     setFileName("");
     setErrors([]);
+
+    const fileInput = document.getElementById(
+      "csv-upload",
+    ) as HTMLInputElement | null;
+
+    if (fileInput) {
+      fileInput.value = "";
+    }
+  };
+
+  // Continue to seating editor
+  const goToSeatingEditor = () => {
+    navigate("/seating-editor", {
+      state: { students },
+    });
   };
 
   return (
     <div className="import-page">
+      {/* Page heading */}
       <div className="import-header">
         <div>
           <p className="page-eyebrow">CLASSROOM MANAGEMENT</p>
+
           <h1>Import students</h1>
+
           <p>
             Upload your Bromcom class list to begin creating your seating plan.
           </p>
         </div>
       </div>
 
+      {/* CSV upload card */}
       <div className="import-card">
         <div className="import-icon">
           <FileSpreadsheet size={28} />
@@ -131,10 +160,12 @@ function ImportStudents() {
           />
         </label>
 
+        {/* Loading message */}
         {loading && (
           <p className="loading-message">Reading student records...</p>
         )}
 
+        {/* Successful file upload */}
         {fileName && (
           <div className="file-success">
             <CheckCircle2 size={19} />
@@ -154,6 +185,7 @@ function ImportStudents() {
           </div>
         )}
 
+        {/* Import errors */}
         {errors.length > 0 && (
           <div className="import-errors" role="alert">
             <AlertCircle size={19} />
@@ -171,6 +203,7 @@ function ImportStudents() {
         )}
       </div>
 
+      {/* Student records preview */}
       {students.length > 0 && (
         <div className="student-preview">
           <div className="preview-header">
@@ -181,11 +214,14 @@ function ImportStudents() {
 
             <div className="student-count">
               <Users size={19} />
+
               <strong>{students.length}</strong>
+
               <span>Students</span>
             </div>
           </div>
 
+          {/* Student data table */}
           <div className="table-container">
             <table>
               <thead>
@@ -212,12 +248,24 @@ function ImportStudents() {
             </table>
           </div>
 
+          {/* Preview information */}
           {students.length > 10 && (
             <p className="preview-note">
               Showing the first 10 of {students.length} students. All records
               have been read.
             </p>
           )}
+
+          {/* Action buttons */}
+          <div className="preview-actions">
+            <button
+              type="button"
+              className="continue-button"
+              onClick={goToSeatingEditor}
+            >
+              Continue to seating editor
+            </button>
+          </div>
         </div>
       )}
     </div>
