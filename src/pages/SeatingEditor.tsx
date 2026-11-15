@@ -79,8 +79,8 @@ function SeatingEditor() {
   const addDesk = () => {
     const newDesk: Desk = {
       id: nextDeskId,
-      x: 40 + Math.floor(desks.length / 10) * 200,
-      y: 90 + (desks.length % 10) * 90,
+      x: 20 + (desks.length % 10) * 130,
+      y: 90 + Math.floor(desks.length / 10) * 100,
       studentIndex: null,
     };
 
@@ -96,8 +96,8 @@ function SeatingEditor() {
         desk.id === id
           ? {
               ...desk,
-              x: Math.max(10, Math.min(x, 830)),
-              y: Math.max(60, Math.min(y, 540)),
+              x: Math.max(10, Math.min(x, 1630)),
+              y: Math.max(60, Math.min(y, 1280)),
             }
           : desk,
       ),
@@ -187,13 +187,13 @@ function SeatingEditor() {
           </div>
 
           <div className="classroom-canvas">
-            <Stage width={1000} height={1400}>
+            <Stage width={1780} height={1400}>
               <Layer>
                 {/* Classroom boundary */}
                 <Rect
                   x={10}
                   y={10}
-                  width={980}
+                  width={1800}
                   height={1380}
                   fill="#f8fafc"
                   stroke="#cbd5e1"
@@ -255,8 +255,8 @@ function SeatingEditor() {
                       }}
                     >
                       <Rect
-                        width={150}
-                        height={80}
+                        width={120}
+                        height={70}
                         fill={
                           selectedDeskId === desk.id
                             ? "#dbeafe"
