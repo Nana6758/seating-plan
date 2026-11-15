@@ -79,8 +79,8 @@ function SeatingEditor() {
   const addDesk = () => {
     const newDesk: Desk = {
       id: nextDeskId,
-      x: 40 + (desks.length % 5) * 175,
-      y: 90 + Math.floor(desks.length / 5) * 120,
+      x: 40 + Math.floor(desks.length / 10) * 200,
+      y: 90 + (desks.length % 10) * 90,
       studentIndex: null,
     };
 
@@ -187,14 +187,14 @@ function SeatingEditor() {
           </div>
 
           <div className="classroom-canvas">
-            <Stage width={1000} height={650}>
+            <Stage width={1000} height={1400}>
               <Layer>
                 {/* Classroom boundary */}
                 <Rect
                   x={10}
                   y={10}
                   width={980}
-                  height={630}
+                  height={1380}
                   fill="#f8fafc"
                   stroke="#cbd5e1"
                   strokeWidth={3}
